@@ -5,6 +5,7 @@
     <div class="tree-panel">
       <div class="panel-header">
         <button @click="loadInitialData">Обновить данные</button>
+        <button @click="toggleThemeCustomizer">Настроить тему</button>
       </div>
       <div v-if="loading" class="loading">Загрузка...</div>
       <div v-else>
@@ -75,6 +76,8 @@
         {{ selectedItemId ? 'Нет сотрудников в выбранном подразделении' : 'Выберите элемент для просмотра сотрудников' }}
       </div>
     </div>
+
+    <ThemeCustomizer v-if="showThemeCustomizer" />
 
     <!-- Контекстное меню -->
     <div 
@@ -180,6 +183,7 @@
 <script setup>
 import { ref, computed, h, onMounted } from 'vue'
 import axios from 'axios'
+import ThemeCustomizer from './components/ThemeCustomizer.vue'
 
 // API базовый URL
 const API_BASE = 'http://localhost:3000/api'
@@ -198,6 +202,7 @@ const loadingEmployees = ref(false)
 const contextMenu = ref({ visible: false, x: 0, y: 0, itemId: null })
 const showEmployeeModal = ref(false)
 const editingEmployee = ref(null)
+const showThemeCustomizer = ref(false)
 
 // Форма сотрудника
 const employeeForm = ref({
@@ -371,6 +376,10 @@ function closeContextMenu() {
   contextMenu.value.visible = false
 }
 
+function toggleThemeCustomizer() {
+  showThemeCustomizer.value = !showThemeCustomizer.value
+}
+
 // Модальное окно сотрудника
 function openEmployeeModal(employee = null) {
   editingEmployee.value = employee
@@ -506,16 +515,23 @@ onMounted(() => {
 </script>
 
 <style>
+:root {
+  --panel-bg: #ffffff;
+  --header-bg: #f5f5f5;
+  --font-family: 'Gill Sans', 'Gill Sans MT', Calibri;
+  --font-size: 14px;
+}
+
 .admin-app {
   display: flex;
   height: auto;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri;
-  
+  font-family: var(--font-family);
+  font-size: var(--font-size);
 }
 
 .panel-header {
   padding: 10px;
-  background: #f5f5f5;
+  background: var(--header-bg);
   border-bottom: 1px solid #ddd;
 }
 
@@ -523,7 +539,7 @@ onMounted(() => {
 .tree-panel {
   width: auto;
   border-right: 2px solid #eee;
-  background: #ffffff;
+  background: var(--panel-bg);
   overflow-y: auto;
   
 }
